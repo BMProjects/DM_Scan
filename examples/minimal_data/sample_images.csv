@@ -1,0 +1,7 @@
+sample_glasses_id,lens_side,grating_type,phase_index,file_path
+0001,left,cycle,0,sample_frame0.tif
+0001,left,cycle,1,sample_frame1.tif
+0001,left,cycle,2,sample_frame2.tif
+0001,left,cycle,3,sample_frame3.tif
+0001,left,cycle,4,sample_frame4.tif
+

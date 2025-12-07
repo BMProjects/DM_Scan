@@ -1,0 +1,23 @@
+# Threshold detection parameters (28-frame baseline)
+bg_kernel_ratio: 0.001
+bg_max_sigma: 60.0
+open_kernel: 3
+close_kernel: 5
+adaptive_block: 41
+adaptive_c: 9
+density_kernel_ratio: 0.08
+density_threshold: 0.2
+dense_min_area: 2000
+min_area: 20
+scratch_min_len: 40
+scratch_min_aspect: 4.0
+scratch_extend_ratio: 0.25
+scratch_extend_min_px: 12
+scratch_extend_width_ratio: 1.0
+scratch_extend_min_width: 4
+pit_max_area: 2600
+pit_circularity: 0.65
+scratch_merge_gray_tol: 20.0
+prominence_min_value: 20.0
+clahe_clip_limit: 2.0
+clahe_tile_size: 8
