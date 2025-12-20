@@ -38,6 +38,11 @@ def compute_phase(frames: np.ndarray, *, amp_threshold: float = 1.0) -> PhaseRes
     """Compute wrapped phase, DC, and amplitude from a 5-frame stack (H x W x 5)."""
     if frames.ndim != 3 or frames.shape[2] != 5:
         raise ValueError("Expected frames shape HxWx5 for five-step PSI.")
+    f1: np.ndarray
+    f2: np.ndarray
+    f3: np.ndarray
+    f4: np.ndarray
+    f5: np.ndarray
     f1, f2, f3, f4, f5 = [frames[:, :, i].astype(np.float32) for i in range(5)]
     num = 2.0 * (f2 - f4)
     den = f1 - 2.0 * f3 + f5

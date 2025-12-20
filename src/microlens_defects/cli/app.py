@@ -48,7 +48,7 @@ def detect(
     glasses: Optional[str] = typer.Option(None, "--glasses", help="Glasses ID (e.g., 2006)."),
     side: Optional[str] = typer.Option(None, "--side", help="Lens side (left/right)."),
     grating: Optional[str] = typer.Option(None, "--grating", help="Grating type (heng/zong/cycle)."),
-    all: bool = typer.Option(False, "--all", help="Process all combinations in DB."),
+    all_samples: bool = typer.Option(False, "--all", help="Process all combinations in DB."),
     limit: Optional[int] = typer.Option(None, "--limit", help="Max combinations when using --all."),
     num_frames: int = typer.Option(DEFAULT_NUM_FRAMES, "--num-frames", help="Max frames per stack."),
     save_dir: Path = typer.Option(DEFAULT_OUTPUT_DIR, "--save-dir", help="Output root directory."),
@@ -59,20 +59,20 @@ def detect(
     params = load_params(config)
     logger.info("当前参数：\n%s", json.dumps(asdict(params), ensure_ascii=False, indent=2))
 
-    if limit and limit > 0 and not all and not any([glasses, side, grating]):
+    if limit and limit > 0 and not all_samples and not any([glasses, side, grating]):
         logger.info("--limit specified without single-sample args, enabling --all.")
-        all = True
-    if all and any([glasses, side, grating]):
+        all_samples = True
+    if all_samples and any([glasses, side, grating]):
         typer.echo("--all 不可与 --glasses/--side/--grating 同时使用。", err=True)
         raise typer.Exit(code=2)
-    if not all and not all([glasses, side, grating]):
+    if not all_samples and not all([glasses, side, grating]):
         missing = [name for name, val in (("glasses", glasses), ("side", side), ("grating", grating)) if val is None]
         msg = f"缺少参数: {', '.join('--' + m for m in missing)}。如需批量，请使用 --all。"
         typer.echo(msg, err=True)
         raise typer.Exit(code=2)
 
     loader = ImageStackLoader(db, img_root)
-    if all:
+    if all_samples:
         combinations = loader.list_combinations(min_frames=num_frames)
         if limit and limit > 0:
             combinations = combinations[:limit]

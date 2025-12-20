@@ -28,7 +28,7 @@ def build_temporal_masks(
         Tuple of (mask_base, source, filtered_mask)
     """
     mask_base = (roi_mask > 0).astype(np.uint8) * 255
-    source = detection_img.astype(np.uint8)
+    source: np.ndarray = detection_img.astype(np.uint8)
     source_inv = cv2.bitwise_not(source)
     
     diff = cv2.normalize(source_inv, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
@@ -196,10 +196,10 @@ def classify_components(
     if np.any(dense_mask):
         num, labels, stats, _ = cv2.connectedComponentsWithStats(dense_mask, connectivity=8)
         for idx in range(1, num):
-            area = stats[idx, cv2.CC_STAT_AREA]
+            area = int(stats[idx, cv2.CC_STAT_AREA])
             if area < params.dense_min_area:
                 continue
-            component_mask = (labels == idx).astype(np.uint8) * 255
+            component_mask: np.ndarray = (labels == idx).astype(np.uint8) * 255
             dense_mask_filtered = cv2.bitwise_or(dense_mask_filtered, component_mask)
             x = int(stats[idx, cv2.CC_STAT_LEFT])
             y = int(stats[idx, cv2.CC_STAT_TOP])
@@ -217,11 +217,11 @@ def classify_components(
             residual_mask, connectivity=8
         )
         for idx in range(1, num_seed):
-            area = stats_seed[idx, cv2.CC_STAT_AREA]
+            area = int(stats_seed[idx, cv2.CC_STAT_AREA])
             if area < params.min_area:
                 continue
             
-            component_mask = (labels_seed == idx).astype(np.uint8) * 255
+            component_mask: np.ndarray = (labels_seed == idx).astype(np.uint8) * 255
             contours, _ = cv2.findContours(
                 component_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE
             )

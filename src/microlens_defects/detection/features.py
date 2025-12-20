@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Dict
+from typing import Dict, Tuple
 
 import cv2
 import numpy as np
@@ -104,7 +104,7 @@ def estimate_roi_mask(dc_map: np.ndarray) -> np.ndarray:
     else:
         areas = stats[1:, cv2.CC_STAT_AREA]
         main_idx = 1 + int(np.argmax(areas))
-        roi = (labels == main_idx).astype(np.uint8) * 255
+        roi: np.ndarray = (labels == main_idx).astype(np.uint8) * 255
     
     # Fill holes and erode slightly
     roi = ndi.binary_fill_holes(roi > 0).astype(np.uint8) * 255
@@ -128,7 +128,7 @@ def build_feature_bundle(stack: np.ndarray) -> Dict[str, np.ndarray]:
     """
     dc_map = np.mean(stack, axis=2)
     temporal_std_map = np.std(stack, axis=2)
-    roi_mask = estimate_roi_mask(dc_map) * 255
+    roi_mask: np.ndarray = estimate_roi_mask(dc_map) * 255
     
     return {
         "dc_map": dc_map.astype(np.float32),
@@ -173,5 +173,5 @@ def crop_bundle(bundle: Dict[str, np.ndarray]) -> Dict[str, np.ndarray]:
         "temporal_crop": temporal_crop,
         "roi_mask": roi_crop,
         "roi_uint8": dc_uint8,
-        "bbox": (x0, y0, x1 - x0, y1 - y0),
+        "bbox": (int(x0), int(y0), int(x1 - x0), int(y1 - y0)),
     }
