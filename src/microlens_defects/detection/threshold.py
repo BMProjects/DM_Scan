@@ -30,7 +30,7 @@ from .params import (
     DEFAULT_PARAMS,
     ThresholdParams,
 )
-from .rendering import record_metadata, render_overlay, save_results
+from .rendering import record_metadata, save_results
 
 # Re-export for backward compatibility
 __all__ = [

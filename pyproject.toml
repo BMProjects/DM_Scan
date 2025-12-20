@@ -40,8 +40,14 @@ include = ["microlens_defects*"]
 [tool.ruff]
 line-length = 120
 target-version = "py39"
+
+[tool.ruff.lint]
 select = ["E", "F", "I", "B"]
-ignore = ["E203", "E501"]
+ignore = [
+    "E203",   # Whitespace before ':'
+    "E501",   # Line too long (handled by formatter)
+    "B008",   # Do not perform function calls in argument defaults (needed for Typer)
+]
 
 [tool.black]
 line-length = 120
