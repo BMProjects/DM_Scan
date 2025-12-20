@@ -1,9 +1,11 @@
 # 缺陷检测与标注（数据库→特征→分割/标注→数据集）
 
-面向非计算机背景用户，提供开箱即用的 Python 包 `microlens-defects`：
+面向非计算机背景用户，提供开箱即用的 Python 包 `microlens-defects` (v0.3.0)：
 - 28 帧阈值法基线：一键生成全图蒙版、COCO 标注、统计汇总；
 - 五步相移法：计算相位/DC/幅值；
-- 单一 CLI + YAML 配置，配套文档集中在 `docs/index.md`。
+- 统一检测器接口：为机器学习检测器预留扩展；
+- 单一 CLI + YAML 配置，配套文档集中在 `docs/index.md`；
+- 完善的日志和异常处理，便于调试和错误追踪。
 
 ---
 
@@ -44,16 +46,26 @@ microlens-defects phase5 ./my_five_frames --pattern "*.tif" --output phase_resul
 
 ## 目录结构
 - `src/microlens_defects/`：库代码  
+  - `logging.py`：统一日志框架
+  - `exceptions.py`：自定义异常层次
   - `data/db.py`：SQLite + 图像根目录加载器  
-  - `detection/threshold.py`：28 帧阈值基线（原 `defect_segmentation_threshold.py` 模块化版）  
-  - `cli/app.py`：Typer 入口，命令 `detect`  
-  - `features/five_step_phase.py`：五步相移法相位/DC/幅值计算，CLI `microlens-defects phase5`
-  - `ml/`, `semi/`：后续 ML/半监督占位  
+  - `detection/`：缺陷检测模块（已模块化）
+    - `base.py`：抽象检测器接口 (`BaseDetector`, `DetectionResult`)
+    - `params.py`：参数定义与验证
+    - `features.py`：特征提取函数
+    - `masks.py`：掩码构建与组件分类
+    - `rendering.py`：可视化渲染与结果导出
+    - `threshold.py`：阈值检测器实现 (`ThresholdDetector`)
+  - `cli/app.py`：Typer CLI 入口  
+  - `features/five_step_phase.py`：五步相移法
+  - `ml/`, `semi/`, `viz/`：ML/半监督/可视化占位  
 - `configs/`：YAML 参数（`detect_threshold.yaml`）  
-- `docs/`：集中文档入口 `docs/index.md`（架构/流水线/测试/背景/进展等）  
-- `tests/`：基础单测（示例）  
+- `docs/`：集中文档（架构/流水线/测试等）  
+- `tests/`：单元测试（pytest + fixtures）
+  - `conftest.py`：共享 fixtures
+  - `test_params.py`, `test_features.py`, `test_masks.py`, `test_detector.py`：模块测试
 - `examples/`：最小数据/Notebook 占位  
-- CI：建议添加 lint+test 工作流（见 `docs/test_plan.md`），当前仓库未附带 CI 文件
+- `.github/workflows/ci.yml`：GitHub Actions CI/CD（lint + type check + pytest）
 
 ---
 

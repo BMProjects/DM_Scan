@@ -3,13 +3,12 @@
 from __future__ import annotations
 
 import json
+from dataclasses import asdict, replace
 from pathlib import Path
 from typing import Optional
 
 import typer
 import yaml
-
-from dataclasses import replace
 
 from microlens_defects.data.db import ImageStackLoader
 from microlens_defects.detection.threshold import (
@@ -20,6 +19,9 @@ from microlens_defects.detection.threshold import (
     run_threshold_detection,
 )
 from microlens_defects.features.five_step_phase import compute_phase, load_five_images, save_phase_result
+from microlens_defects.logging import get_logger
+
+logger = get_logger(__name__)
 
 DEFAULT_DB_FILE = Path("microlens_metadata.db")
 DEFAULT_IMAGE_ROOT = Path("organized_tiffs")
@@ -55,11 +57,10 @@ def detect(
     """Run classical threshold detection and export masks/COCO/metadata."""
     save_dir.mkdir(parents=True, exist_ok=True)
     params = load_params(config)
-    print("当前参数：")
-    print(json.dumps(params.__dict__, ensure_ascii=False, indent=2))
+    logger.info("当前参数：\n%s", json.dumps(asdict(params), ensure_ascii=False, indent=2))
 
     if limit and limit > 0 and not all and not any([glasses, side, grating]):
-        print("[INFO] --limit specified without single-sample args, enabling --all.")
+        logger.info("--limit specified without single-sample args, enabling --all.")
         all = True
     if all and any([glasses, side, grating]):
         typer.echo("--all 不可与 --glasses/--side/--grating 同时使用。", err=True)
