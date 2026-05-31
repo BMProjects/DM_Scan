@@ -1,6 +1,6 @@
-# API 使用指南 (v0.3.0)
+# API 使用指南 (v0.4.0)
 
-本文档介绍 `microlens-defects` v0.3.0 的主要 API 和使用方式。
+本文档介绍 `microlens-defects` v0.4.0 的主要 API 和使用方式（缺陷检测 + 五步相移形貌）。
 
 ## 快速开始
 
@@ -169,25 +169,10 @@ class BaseDetector(ABC):
 ```
 
 **当前实现**：
-- `ThresholdDetector`: 阈值法检测器
+- `ThresholdDetector`: 28 帧阈值法检测器
 
-**未来计划**：
-- `MLDetector`: 机器学习检测器 (DINOv3 + YOLO12)
-
-#### 切换检测器示例
-
-```python
-# 当前使用阈值检测
-from microlens_defects.detection import ThresholdDetector
-
-detector = ThresholdDetector(params)
-result = detector.detect(stack)
-
-# 未来可无缝切换到ML检测器
-# from microlens_defects.ml import MLDetector
-# detector = MLDetector(model_path="model.pth")
-# result = detector.detect(stack)  # 同样的接口！
-```
+`BaseDetector` 提供统一接口，便于在二次开发中按需替换为自定义检测器
+（见下文「添加新的检测器」）。
 
 ### 五步相移法
 
@@ -313,7 +298,7 @@ ruff check src/
 mypy src/microlens_defects --ignore-missing-imports
 
 # 格式化
-black src/
+ruff format src/
 ```
 
 ---

@@ -12,7 +12,7 @@ import numpy as np
 @dataclass
 class DetectionResult:
     """Container for detection results.
-    
+
     Attributes:
         mask: Binary defect mask (H x W, uint8, 0/255)
         annotations: List of COCO-format annotation dicts
@@ -30,18 +30,18 @@ class DetectionResult:
 
 class BaseDetector(ABC):
     """Abstract base class for defect detectors.
-    
-    All detector implementations (threshold-based, ML-based, etc.) should
-    inherit from this class to ensure consistent interface.
+
+    All detector implementations inherit from this class so they share a
+    consistent ``detect`` / ``get_params`` / ``name`` interface.
     """
 
     @abstractmethod
     def detect(self, stack: np.ndarray) -> DetectionResult:
         """Run detection on an image stack.
-        
+
         Args:
             stack: Image stack with shape (H, W, N) where N is frame count
-            
+
         Returns:
             DetectionResult containing mask, annotations, and metadata
         """
@@ -50,7 +50,7 @@ class BaseDetector(ABC):
     @abstractmethod
     def get_params(self) -> Dict[str, Any]:
         """Get current detector parameters.
-        
+
         Returns:
             Dictionary of parameter names to values
         """
@@ -60,7 +60,7 @@ class BaseDetector(ABC):
     @abstractmethod
     def name(self) -> str:
         """Detector name for identification.
-        
+
         Returns:
             Human-readable detector name
         """

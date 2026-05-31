@@ -14,11 +14,11 @@ class ThresholdParams:
     # Background/blur parameters
     bg_kernel_ratio: float = 0.001
     bg_max_sigma: float = 60.0
-    
+
     # Morphological parameters
     open_kernel: int = 3
     close_kernel: int = 5
-    
+
     # Adaptive threshold parameters
     adaptive_block: int = 41
     adaptive_c: int = 9
@@ -52,18 +52,18 @@ class ThresholdParams:
             self.open_kernel = 1
         if self.open_kernel % 2 == 0:
             self.open_kernel += 1
-            
+
         if self.close_kernel < 1:
             self.close_kernel = 1
         if self.close_kernel % 2 == 0:
             self.close_kernel += 1
-            
+
         # Adaptive block must be odd and >= 3
         if self.adaptive_block < 3:
             self.adaptive_block = 3
         if self.adaptive_block % 2 == 0:
             self.adaptive_block += 1
-            
+
         # Positive constraints
         if self.bg_max_sigma <= 0:
             self.bg_max_sigma = 60.0
@@ -99,7 +99,7 @@ CATEGORIES: List[Dict] = [
 CATEGORY_NAME_TO_ID: Dict[str, int] = {c["name"]: c["id"] for c in CATEGORIES}
 CATEGORY_SHORT: Dict[str, str] = {
     "scratch": "Scr",
-    "pit": "Pit", 
+    "pit": "Pit",
     "crash": "Crsh",
     "anomaly": "Anm",
 }

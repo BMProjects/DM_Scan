@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from dataclasses import asdict
 
-import pytest
-
 from microlens_defects.detection.params import (
     CATEGORIES,
     CATEGORY_NAME_TO_ID,

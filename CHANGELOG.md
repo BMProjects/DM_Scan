@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-05-31
+
+### Changed
+- **Refocused scope** to two classical pillars: five-step phase-shift
+  microstructure morphology and the 28-frame threshold defect-detection baseline.
+- Rewrote `README.md` in English with an animated WEBP pipeline demo
+  (`docs/assets/pipeline_demo.webp`, built by `scripts/make_demo_webp.py`).
+- Consolidated `docs/` to four core files (index, architecture, api_guide,
+  troubleshooting); merged the pipeline notes into `architecture.md`.
+- Updated package docstring / `pyproject` description to the new positioning.
+
+### Removed
+- Empty placeholder packages `ml/`, `semi/`, `viz/` — learning-based detection
+  is developed in a separate project.
+- Eight outdated/roadmap docs (annual progress, todolist, handover, dev/eval
+  SOP, algorithm test plan, test plan, project summary, legacy cleanup).
+
+### Fixed
+- Changelog compare/release links now point to `BMProjects/DM_Scan`.
+
 ## [0.3.0] - 2025-12-20
 
 ### Added
@@ -49,5 +69,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial README, architecture, and pipeline documentation
 - Handover documentation for defect detection
 
-[0.3.0]: https://github.com/YOUR_ORG/DM_Scan/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/YOUR_ORG/DM_Scan/releases/tag/v0.2.0
+[0.4.0]: https://github.com/BMProjects/DM_Scan/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/BMProjects/DM_Scan/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/BMProjects/DM_Scan/releases/tag/v0.2.0

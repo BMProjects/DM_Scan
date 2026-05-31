@@ -2,7 +2,7 @@
 
 ## 环境/安装
 - **pip 过慢或失败**：尝试国内镜像（如 `-i https://pypi.tuna.tsinghua.edu.cn/simple`）。确认 Python ≥3.9。
-- **opencv/科学计算依赖冲突**：建议使用虚拟环境（`python -m venv .venv`）；若 GPU 环境，请选择对应的 paddlepaddle 版本。
+- **opencv/科学计算依赖冲突**：建议使用虚拟环境（`python -m venv .venv` 或 `uv venv`），再 `pip install -e .`。
 
 ## 数据与路径
 - **提示数据库/图片根目录不存在**：检查 `--db`、`--img-root` 路径；确保 SQLite 文件可读、图像目录存在。
@@ -20,5 +20,5 @@
 - **相位异常/掩码为空**：检查曝光/对比度，适当降低 `--amp-threshold`。
 
 ## 参考
-- 完整用法与参数说明：`README.md`、`docs/pipeline.md`
-- 架构/历史：`docs/architecture.md`、`docs/legacy_cleanup.md`
+- 完整用法与参数说明：`README.md`、`docs/architecture.md`
+- API 与二次开发：`docs/api_guide.md`

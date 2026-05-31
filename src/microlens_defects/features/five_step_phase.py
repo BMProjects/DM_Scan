@@ -1,19 +1,21 @@
 """Five-step phase-shifting method for microlens surface measurement.
 
-Implements the classic 5-step PSI with equal phase increments (72 degrees).
-Given five intensity frames I1..I5 with phase shifts of 0, 72, 144, 216, 288 degrees,
-the wrapped phase φ is estimated by:
+Implements 5-step phase-shifting interferometry with equal phase increments of
+72 degrees (one full period sampled by five frames). Given intensity frames
+``I_k`` acquired at shifts ``δ_k = 2π·k/5`` (k = 0..4), the wrapped phase φ is
+recovered by the standard discrete-Fourier demodulation:
 
-    num = 2 * (I2 - I4)
-    den = I1 - 2 * I3 + I5
-    φ = atan2(num, den)
+    num = -Σ_k I_k · sin(δ_k)
+    den =  Σ_k I_k · cos(δ_k)
+    φ   = atan2(num, den)
 
 The DC term (bias) and modulation amplitude are:
 
-    dc = (I1 + I2 + I3 + I4 + I5) / 5
-    amp = (2/5) * sqrt(num^2 + den^2)
+    dc  = (1/5) · Σ_k I_k
+    amp = (2/5) · sqrt(num² + den²)
 
-Reference: Hariharan et al., Five-step phase-shifting algorithm.
+Note: the Hariharan five-step formula assumes 90-degree increments and is *not*
+used here, since acquisition uses equal 72-degree steps.
 """
 
 from __future__ import annotations
@@ -35,22 +37,30 @@ class PhaseResult:
 
 
 def compute_phase(frames: np.ndarray, *, amp_threshold: float = 1.0) -> PhaseResult:
-    """Compute wrapped phase, DC, and amplitude from a 5-frame stack (H x W x 5)."""
+    """Compute wrapped phase, DC, and amplitude from a 5-frame stack (H x W x 5).
+
+    Frames are assumed to be acquired at equal phase shifts of 72 degrees
+    (δ_k = 2π·k/5, k = 0..4). Demodulation uses the discrete-Fourier sums over
+    these shifts rather than the 90-degree Hariharan formula.
+    """
     if frames.ndim != 3 or frames.shape[2] != 5:
         raise ValueError("Expected frames shape HxWx5 for five-step PSI.")
-    f1: np.ndarray
-    f2: np.ndarray
-    f3: np.ndarray
-    f4: np.ndarray
-    f5: np.ndarray
-    f1, f2, f3, f4, f5 = [frames[:, :, i].astype(np.float32) for i in range(5)]
-    num = 2.0 * (f2 - f4)
-    den = f1 - 2.0 * f3 + f5
+    stack = frames.astype(np.float32)
+    shifts = 2.0 * np.pi * np.arange(5, dtype=np.float32) / 5.0
+    cos_c = np.cos(shifts)
+    sin_c = np.sin(shifts)
+    num = -np.tensordot(stack, sin_c, axes=([2], [0]))  # -Σ I_k sin δ_k
+    den = np.tensordot(stack, cos_c, axes=([2], [0]))  # Σ I_k cos δ_k
     phase = np.arctan2(num, den)  # wrapped phase in [-pi, pi]
-    dc = (f1 + f2 + f3 + f4 + f5) / 5.0
+    dc = stack.mean(axis=2)
     amplitude = (2.0 / 5.0) * np.sqrt(num * num + den * den)
     mask = (amplitude >= amp_threshold).astype(np.uint8) * 255
-    return PhaseResult(phase=phase.astype(np.float32), dc=dc.astype(np.float32), amplitude=amplitude.astype(np.float32), mask=mask)
+    return PhaseResult(
+        phase=phase.astype(np.float32),
+        dc=dc.astype(np.float32),
+        amplitude=amplitude.astype(np.float32),
+        mask=mask,
+    )
 
 
 def load_five_images(folder: Path, pattern: str = "*.tif") -> np.ndarray:

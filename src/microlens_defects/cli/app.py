@@ -26,7 +26,10 @@ logger = get_logger(__name__)
 DEFAULT_DB_FILE = Path("microlens_metadata.db")
 DEFAULT_IMAGE_ROOT = Path("organized_tiffs")
 
-app = typer.Typer(add_completion=False, help="Microlens defect detection toolkit CLI.")
+app = typer.Typer(
+    add_completion=False,
+    help="Microlens schlieren toolkit: phase-shift microstructure morphology (phase5) and threshold defect detection (detect).",
+)
 
 
 def load_params(config: Optional[Path]) -> ThresholdParams:
@@ -88,7 +91,9 @@ def detect(
 
 @app.command("phase5")
 def phase5(
-    input_dir: Path = typer.Argument(..., exists=True, file_okay=False, help="Directory containing 5 phase-shifted images."),
+    input_dir: Path = typer.Argument(
+        ..., exists=True, file_okay=False, help="Directory containing 5 phase-shifted images."
+    ),
     pattern: str = typer.Option("*.tif", "--pattern", "-p", help="Glob pattern for input images."),
     output: Path = typer.Option(Path("phase_result.npz"), "--output", "-o", help="Output NPZ path."),
     amp_threshold: float = typer.Option(1.0, "--amp-threshold", help="Amplitude threshold for valid mask."),

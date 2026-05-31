@@ -20,7 +20,7 @@ class TestDetectionResult:
         """Should create with just a mask."""
         mask = np.zeros((50, 50), dtype=np.uint8)
         result = DetectionResult(mask=mask)
-        
+
         assert result.mask is mask
         assert result.annotations == []
         assert result.metadata == {}
@@ -30,9 +30,9 @@ class TestDetectionResult:
         mask = np.zeros((50, 50), dtype=np.uint8)
         annotations = [{"id": 1, "category_id": 1}]
         metadata = {"detector": "test"}
-        
+
         result = DetectionResult(mask=mask, annotations=annotations, metadata=metadata)
-        
+
         assert result.mask is mask
         assert result.annotations == annotations
         assert result.metadata == metadata
@@ -71,7 +71,7 @@ class TestThresholdDetector:
         """get_params should return dict."""
         detector = ThresholdDetector()
         params = detector.get_params()
-        
+
         assert isinstance(params, dict)
         assert "open_kernel" in params
         assert "clahe_clip_limit" in params
@@ -80,7 +80,7 @@ class TestThresholdDetector:
         """detect should return DetectionResult."""
         detector = ThresholdDetector()
         result = detector.detect(sample_stack)
-        
+
         assert isinstance(result, DetectionResult)
         assert isinstance(result.mask, np.ndarray)
         assert isinstance(result.annotations, list)
@@ -90,14 +90,14 @@ class TestThresholdDetector:
         """Output mask should have same HxW as input."""
         detector = ThresholdDetector()
         result = detector.detect(sample_stack)
-        
+
         assert result.mask.shape == sample_stack.shape[:2]
 
     def test_detect_metadata_has_expected_keys(self, sample_stack):
         """Metadata should contain expected keys."""
         detector = ThresholdDetector()
         result = detector.detect(sample_stack)
-        
+
         assert "detector" in result.metadata
         assert "total_defects" in result.metadata
         assert "category_counts" in result.metadata
@@ -105,7 +105,7 @@ class TestThresholdDetector:
     def test_detect_raises_on_wrong_dimensions(self):
         """Should raise ValueError for non-3D input."""
         detector = ThresholdDetector()
-        
+
         with pytest.raises(ValueError, match="Expected 3D stack"):
             detector.detect(np.zeros((50, 50), dtype=np.float32))
 
@@ -123,13 +123,10 @@ class TestBackwardCompatibility:
     def test_import_from_threshold_module(self):
         """Old import paths should still work."""
         from microlens_defects.detection.threshold import (
-            DEFAULT_NUM_FRAMES,
-            DEFAULT_OUTPUT_DIR,
             DEFAULT_PARAMS,
             ThresholdParams,
-            run_threshold_detection,
         )
-        
+
         assert ThresholdParams is not None
         assert DEFAULT_PARAMS is not None
 
@@ -141,7 +138,7 @@ class TestBackwardCompatibility:
             ThresholdDetector,
             ThresholdParams,
         )
-        
+
         assert BaseDetector is not None
         assert DetectionResult is not None
         assert ThresholdDetector is not None
